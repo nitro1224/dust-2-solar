@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Solar Panel Dust Monitoring</title>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      text-align: center;
+      padding-top: 50px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      margin: auto;
+      width: 500px;
+      box-shadow: 0px 0px 12px rgba(0,0,0,0.1);
+    }
+    .status {
+      font-size: 28px;
+      margin: 20px;
+      color: #333;
+    }
+    .time {
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>☀️ Solar Dust Monitoring</h1>
+    <div class="status" id="status">🟡 Waiting for data...</div>
+    <div class="time" id="timestamp">--</div>
+  </div>
+
+  <script>
+    const statusElement = document.getElementById("status");
+    const timestampElement = document.getElementById("timestamp");
+
+    const client = mqtt.connect("wss://broker.hivemq.com:8884/mqtt");
+
+    client.on("connect", () => {
+      console.log("✅ Connected to MQTT");
+      client.subscribe("solar/dust");
+    });
+
+    client.on("message", (topic, message) => {
+      const payload = message.toString();
+      const now = new Date().toLocaleString();
+
+      console.log("📩 Received:", payload);
+
+      let displayMsg = "📘 " + payload;
+      if (payload === "dust_detected") displayMsg = "⚠️ Dust Detected!";
+      if (payload === "dust_cleared") displayMsg = "✅ Dust Cleared!";
+      if (payload === "calibrated") displayMsg = "🟢 System Calibrated";
+      if (payload === "reset") displayMsg = "🔁 System Reset";
+
+      statusElement.textContent = displayMsg;
+      timestampElement.textContent = "Last update: " + now;
+    });
+  </script>
+</body>
+</html>

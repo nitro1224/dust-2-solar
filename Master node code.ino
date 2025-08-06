@@ -20,8 +20,8 @@ PubSubClient mqttClient(espClient);
 
 // Telegram
 WiFiClientSecure secured_client;
-const char* BOT_TOKEN = "7885800346:AAGgKoMtchHG9T2F5IiD4XeCU2OX8QehgO0";
-const char* CHAT_ID = "7571086707";
+const char* BOT_TOKEN = "put here your telegram bot token";
+const char* CHAT_ID = "put here your chat ID";
 UniversalTelegramBot bot(BOT_TOKEN, secured_client);
 
 // Weather API
